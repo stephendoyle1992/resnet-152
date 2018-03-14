@@ -4,3 +4,7 @@ bin/
 include/
 lib/
 pip-selfcheck.json
+.DS_Store
+1_Dataset/
+__pycache__/
+resnet152_weights_tf.h5
