@@ -11,7 +11,7 @@ def main():
     argp.add_argument("-f", "--csv_file", required=True, help="path to csv file")
     argp.add_argument("-x", "--img_width", required=True, help="width of original image")
     argp.add_argument("-y", "--img_height", required=True, help="height of original image")
-    argp.add_argument('-b', "--bold", default="1",required=False, help="bold output (score above .500 fills X amount, else fill 1)")
+    argp.add_argument('-b', "--bold", default="1",required=False, help="bold output (any block with score > 0.500 will have given fill amount)")
     
     args = vars(argp.parse_args())
 
@@ -37,7 +37,7 @@ def main():
                         (new_width, new_height), (new_width, posy)), fill=int(args['bold']))
                     else:
                         ImageDraw.Draw(img).polygon(((posx, posy), (posx,new_height),
-                        (new_width, new_height), (new_width, posy)), fill=1)
+                        (new_width, new_height), (new_width, posy)), fill=score)
 
 
     myimg = np.ma.masked_equal(np.array(img), 0.)
