@@ -9,8 +9,6 @@ from scale_layer import Scale
 
 from utils import loadData, getFeatures, getAccuracy
 
-#from load_cifar10 import load_cifar10_data
-
 import sys
 sys.setrecursionlimit(3000)
 
@@ -72,7 +70,7 @@ def conv_block(input_tensor, kernel_size, filters, stage, block, strides=(2, 2))
     bn_name_base = 'bn' + str(stage) + block + '_branch'
     scale_name_base = 'scale' + str(stage) + block + '_branch'
 
-    x = Convolution2D(nb_filter1, (1, 1), subsample=strides,
+    x = Convolution2D(nb_filter1, (1, 1), strides=strides,
                       name=conv_name_base + '2a', use_bias=False)(input_tensor)
     x = BatchNormalization(epsilon=eps, axis=bn_axis, name=bn_name_base + '2a')(x)
     x = Scale(axis=bn_axis, name=scale_name_base + '2a')(x)
@@ -89,7 +87,7 @@ def conv_block(input_tensor, kernel_size, filters, stage, block, strides=(2, 2))
     x = BatchNormalization(epsilon=eps, axis=bn_axis, name=bn_name_base + '2c')(x)
     x = Scale(axis=bn_axis, name=scale_name_base + '2c')(x)
 
-    shortcut = Convolution2D(nb_filter3, (1, 1), subsample=strides,
+    shortcut = Convolution2D(nb_filter3, (1, 1), strides=strides,
                              name=conv_name_base + '1', use_bias=False)(input_tensor)
     shortcut = BatchNormalization(epsilon=eps, axis=bn_axis, name=bn_name_base + '1')(shortcut)
     shortcut = Scale(axis=bn_axis, name=scale_name_base + '1')(shortcut)
@@ -126,7 +124,7 @@ def resnet152_model(img_rows, img_cols, color_type=1, num_classes=None):
       img_input = Input(shape=(color_type, img_rows, img_cols), name='data')
 
     x = ZeroPadding2D((3, 3), name='conv1_zeropadding')(img_input)
-    x = Convolution2D(64, (7, 7), subsample=(2, 2), name='conv1', bias=False)(x)
+    x = Convolution2D(64, (7, 7), strides=(2, 2), name='conv1', use_bias=False)(x)
     x = BatchNormalization(epsilon=eps, axis=bn_axis, name='bn_conv1')(x)
     x = Scale(axis=bn_axis, name='scale_conv1')(x)
     x = Activation('relu', name='conv1_relu')(x)
@@ -217,12 +215,11 @@ if __name__ == '__main__':
     channel = 3
 
     classes = next(os.walk(ARGS.image_dir + '/train'))[1]
-    print(classes)
 
     # Load train
     train, train_labels = loadData(ARGS.image_dir + '/train', ARGS.imgs_cols,
                                     ARGS.imgs_rows, classes)
-                                    
+                          
     # Load validation_data
     test, test_labels = loadData(ARGS.image_dir + '/test', ARGS.imgs_cols,
                                     ARGS.imgs_rows, classes)
@@ -231,7 +228,7 @@ if __name__ == '__main__':
 
     # We save the result of passing the images through the model trained with imagenet
     # without the last layer
-    features = getFeatures(model, train, ARGS.batch_size)
+    features = getFeatures(model, train, ARGS.batch_size)    
     test_features = getFeatures(model, test, ARGS.batch_size)
 
     # We create a new model, so that we train only the last layer
