@@ -14,9 +14,8 @@ from scale_layer import Scale
 from resnet_152 import resnet152_model
 
 class ImageInput(object):
-    def __init__(self, file_input, labels_input, overlapx, overlapy):
+    def __init__(self, file_input, overlapx, overlapy):
         self.file_input = file_input
-        self.labels_input= labels_input
         self.overlapx = overlapx
         self.overlapy = overlapy
 
@@ -100,11 +99,9 @@ def sliding_window(imageinput):
 def main():
     argp = argparse.ArgumentParser()
     argp.add_argument("-i", "--image", required=True, help="path to image")
-
-    argp.add_argument("-l", "--label", required=True, help="path to labels text file")
     args = vars(argp.parse_args())
 
-    image = ImageInput(args["image"], args["label"], 1, 1);
+    image = ImageInput(args["image"], 1, 1);
     sliding_window(image)
 
 if __name__ == "__main__":
