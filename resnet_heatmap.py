@@ -14,11 +14,9 @@ from scale_layer import Scale
 from resnet_152 import resnet152_model
 
 class ImageInput(object):
-    def __init__(self, file_input, labels_input,
-                model_input, overlapx, overlapy):
+    def __init__(self, file_input, labels_input, overlapx, overlapy):
         self.file_input = file_input
         self.labels_input= labels_input
-        self.model_input = model_input
         self.overlapx = overlapx
         self.overlapy = overlapy
 
@@ -45,7 +43,9 @@ def sliding_window(imageinput):
     predictions = prediction_model.predict(test_features, batch_size = 8, verbose=1)
     
     acc = getAccuracy(test_labels, predictions)
-    print(acc)
+    print('#####################################################')
+    print('current model accuracy: ' + acc)
+    print('#####################################################')
 
     if os.path.isfile(imageinput.file_input):
         image = Image.open(imageinput.file_input)
@@ -54,6 +54,7 @@ def sliding_window(imageinput):
         height = size[1]
         csv_path = os.path.splitext(imageinput.file_input)[0] + '.csv'
         csv_file = open(csv_path, 'w')
+        csv_file.write('cont,label,score,divisor,posx,posy,posx,new_width,new_width,new_height,new_height,posy\n')
 
 
         for divisor in range(40,41,1):
@@ -99,17 +100,12 @@ def sliding_window(imageinput):
 def main():
     argp = argparse.ArgumentParser()
     argp.add_argument("-i", "--image", required=True, help="path to image")
-    argp.add_argument("-m", "--model", required=True, help="path to trained model")
+
     argp.add_argument("-l", "--label", required=True, help="path to labels text file")
     args = vars(argp.parse_args())
 
-    image = ImageInput(args["image"], args["label"], args["model"], 1, 1);
+    image = ImageInput(args["image"], args["label"], 1, 1);
     sliding_window(image)
-
-
-
-
-    
 
 if __name__ == "__main__":
     main()
