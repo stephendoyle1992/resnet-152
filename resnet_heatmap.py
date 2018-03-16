@@ -43,9 +43,9 @@ def sliding_window(imageinput):
     predictions = prediction_model.predict(test_features, batch_size = 8, verbose=1)
     
     acc = getAccuracy(test_labels, predictions)
-    print('#####################################################')
-    print('current model accuracy: ' + acc)
-    print('#####################################################')
+    print('############### current model accuracy ################')
+    print(acc)
+    print('#######################################################')
 
     if os.path.isfile(imageinput.file_input):
         image = Image.open(imageinput.file_input)
